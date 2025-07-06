@@ -28,21 +28,31 @@ const Login = ({ navigation }: LoginProps) => {
       
         setIsLoading(true);
         try {
-          const response = await axios.post("http://192.168.222.85:3000/api/v1/admin/login", {
-            email: email,
-            password: password,
-          });
+            const response = await axios.post(
+                "http://192.168.0.101:3000/api/v1/admin/login",
+                {
+                  email,
+                  password,
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
       
           const token = response.data?.token;
       
           if (token) {
             await storeToken(token);
-            navigation.replace("Welcome"); // or your main screen
+            navigation.replace("Tabs"); // or your main screen
           } else {
             Alert.alert("Login", "Token not received");
           }
         } catch (error: any) {
           console.error("Login Error", error);
+          console.error("Error response:", error.response?.data);
+          console.error("Error status:", error.response?.status);
           Alert.alert("Login Failed", error.response?.data?.msg || "Invalid credentials");
         } finally {
           setIsLoading(false);

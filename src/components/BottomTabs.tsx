@@ -3,11 +3,15 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Welcome from '../screens/Welcome';
 import Profile from '../screens/Profile'; // assume you have this screen
-import { View, Text } from 'react-native';
+import { View, Text,Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // optional
 import NewAdmission from '../screens/NewAdmission';
 import StudentRecord from '../screens/StudentRecord';
 import Attendance from '../screens/Attendance';
+
+// Wrapper components to handle missing navigation props
+const WelcomeWrapper = (props: any) => <Welcome {...props} />;
+const NewAdmissionWrapper = (props: any) => <NewAdmission {...props} />;
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +19,7 @@ const BottomTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#03C7BD',
+        tabBarActiveTintColor: '#FFF',
         tabBarInactiveTintColor: '#999',
         headerShown: false,
         tabBarStyle: {
@@ -27,19 +31,25 @@ const BottomTabs = () => {
     >
       <Tab.Screen
         name="Welcome"
-        component={(props: any) => <Welcome {...props} />}
+        component={WelcomeWrapper}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home-outline" color={color} size={size} />
+            <Image
+              source={require('../assets/Compass.png')}
+              style={{ width: size, height: size, tintColor: color}}
+            />
           ),
         }}
       />
       <Tab.Screen
-        name="New Admission"
-        component={NewAdmission}
+        name="NewAdmission"
+        component={NewAdmissionWrapper}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="person-add-outline" color={color} size={size} />
+            <Image
+              source={require('../assets/User_Add.png')}
+              style={{ width: size, height: size, tintColor: color}}
+            />
           ),
         }}
       />
@@ -48,7 +58,10 @@ const BottomTabs = () => {
         component={StudentRecord}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="document-text-outline" color={color} size={size} />
+            <Image
+              source={require('../assets/File_Search.png')}
+              style={{ width: size, height: size, tintColor: color}}
+            />
           ),
         }}
       />
@@ -57,7 +70,10 @@ const BottomTabs = () => {
         component={Attendance}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="calendar-outline" color={color} size={size} />
+            <Image
+              source={require('../assets/User_Check.png')}
+              style={{ width: size, height: size, tintColor: color}}
+            />
           ),
         }}
       />
@@ -66,3 +82,12 @@ const BottomTabs = () => {
 };
 
 export default BottomTabs;
+
+const styles = StyleSheet.create({
+  icon: {
+    width: 28,
+    height: 28,
+    marginBottom: 10,
+    // tintColor: '#03C7BD',
+  },
+});

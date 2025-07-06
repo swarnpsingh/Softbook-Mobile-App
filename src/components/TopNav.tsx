@@ -19,7 +19,7 @@ const TopNav = () => {
         /> */}
         <Image source={require('../assets/Icon.png')}  style={styles.logo} />
       </TouchableOpacity>
-      <Typo style={styles.title}>Pratap Tech Solutions</Typo>
+      <Typo style={styles.title}>SoftBooks</Typo>
     </View>
   )
 }
