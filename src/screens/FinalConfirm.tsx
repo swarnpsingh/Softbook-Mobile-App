@@ -22,11 +22,24 @@ type FinalConfirmProps = NativeStackScreenProps<RootStackParamList, 'FinalConfir
 
 const FinalConfirm = ({ route }: FinalConfirmProps) => {
   // const { admissionData } = route.params;
+  const [libraryName, setLibraryName] = useState<string>('Library Name'); 
   const [latestStudent, setLatestStudent] = useState<any>(null);
 
   const fetchData = async () => {
     const token = await getToken();
     try {
+      // Fetch admin profile first
+      const profileResponse = await axios.get(
+        'http://192.168.0.100:3000/api/v1/admin/profile',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setLibraryName(profileResponse.data.admin.libraryName);
+
       const response = await axios.get(
         'http://192.168.0.100:3000/api/v1/students/allstudents',
         {
@@ -71,7 +84,7 @@ const FinalConfirm = ({ route }: FinalConfirmProps) => {
       </head>
       <body>
         <div class="header">
-          <h1>PRATAP LIBRARY</h1>
+          <h1>${libraryName}</h1>
           <h3>A SELF STUDY CENTER</h3>
           <p>H. No.-34-A, Singh Villa, Road No.-19, (Near Noble Public School),</p>
           <p>Bank Colony, Baba Chowk, Keshri Nagar, Patna-800024</p>

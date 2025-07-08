@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, ActivityIndicator, Image, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
@@ -18,6 +25,7 @@ type WelcomeProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 // TOKEN= eBearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjUwY2NiOWYwOGE1MDdiNDRmYjA4MCIsImlhdCI6MTc1MTcyMTg5MX0.H00ZOn9_luakIfMMuMToNLUFUGaPBrWrOWNEG8wchYc
 const Welcome = ({ navigation }: WelcomeProps) => {
   // Handle case where navigation might not be provided (when used in bottom tabs)
+  const [libraryName, setLibraryName] = useState<string>('Library Name'); // Initial placeholder
   const handleNavigation = navigation || { replace: () => {} };
   const [roomCount, setRoomCount] = useState<number | null>(null);
   const [shiftCount, setShiftCount] = useState<number | null>(null);
@@ -31,11 +39,22 @@ const Welcome = ({ navigation }: WelcomeProps) => {
 
   const [totalStudents, setTotalStudents] = useState<number>(0);
 
-
   useEffect(() => {
     const fetchData = async () => {
       const token = await getToken();
       try {
+        // Fetch admin profile first
+        const profileResponse = await axios.get(
+          'http://192.168.0.100:3000/api/v1/admin/profile',
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLibraryName(profileResponse.data.admin.libraryName);
+
         const response = await axios.get(
           'http://192.168.0.100:3000/api/v1/seat/allseats',
           {
@@ -45,7 +64,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
             },
           },
         );
-        
+
         const seats = response.data.seats;
 
         const roomSet = new Set<string>();
@@ -64,17 +83,17 @@ const Welcome = ({ navigation }: WelcomeProps) => {
         setSeats(seats);
 
         // ✅ Fetch students
-    const responseStudents = await axios.get(
-        'http://192.168.0.100:3000/api/v1/students/allstudents',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+        const responseStudents = await axios.get(
+          'http://192.168.0.100:3000/api/v1/students/allstudents',
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        }
-      );
-      const students = responseStudents.data.students;
-      setTotalStudents(students.length); // ✅ Save total students count
+        );
+        const students = responseStudents.data.students;
+        setTotalStudents(students.length); // ✅ Save total students count
       } catch (error) {
         console.error('Error fetching seats:', error);
       } finally {
@@ -106,25 +125,31 @@ const Welcome = ({ navigation }: WelcomeProps) => {
   return (
     <ScreenWrapper>
       <ScrollView>
-        <TopNav2 title={
-          <Image source={require('../assets/typo.png')} resizeMode='contain' style={styles.logo} />
-        } />  
+        <TopNav2
+          title={
+            <Image
+              source={require('../assets/typo.png')}
+              resizeMode="contain"
+              style={styles.logo}
+            />
+          }
+        />
         <View style={styles.container}>
           {/* <Typo style={styles.statText}>Total Rooms: {roomCount}</Typo>
           <Typo style={styles.statText}>Total Shifts: {shiftCount}</Typo> */}
 
           {/*Profile Section*/}
           <View style={styles.profileContainer}>
-            <Image
+            {/* <Image
               source={require('../assets/swarnPhoto.jpg')}
               style={styles.profileImage}
-            />
+            /> */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Typo style={styles.profileText} size={24}>
                 Hello
               </Typo>
               <Typo style={styles.profileText} size={24} fontWeight={'bold'}>
-                Library Name
+                {libraryName}
               </Typo>
             </View>
             <Typo style={{ color: '#989FAB' }}>Welcome to your home.</Typo>
@@ -165,9 +190,9 @@ const Welcome = ({ navigation }: WelcomeProps) => {
                 dropdownIconColor="white"
               >
                 {availableRooms.map(room => (
-                  <Picker.Item 
-                    label={room} 
-                    value={room} 
+                  <Picker.Item
+                    label={room}
+                    value={room}
                     key={room}
                     color="white"
                   />
@@ -185,9 +210,9 @@ const Welcome = ({ navigation }: WelcomeProps) => {
                 dropdownIconColor="white"
               >
                 {availableShifts.map(shift => (
-                  <Picker.Item 
-                    label={shift} 
-                    value={shift} 
+                  <Picker.Item
+                    label={shift}
+                    value={shift}
                     key={shift}
                     color="white"
                   />
@@ -214,21 +239,9 @@ const Welcome = ({ navigation }: WelcomeProps) => {
 
         {/* Summary */}
         <View style={styles.summaryContainer}>
-          <Card2
-            tint="#03C7BD"
-            number={totalSeats}
-            label="Total Seats"
-          />
-          <Card2
-            tint="#F591B7"
-            number={occupied}
-            label="Occupied"
-          />
-          <Card2
-            tint="#4BDE80"
-            number={available}
-            label="Available"
-          />
+          <Card2 tint="#03C7BD" number={totalSeats} label="Total Seats" />
+          <Card2 tint="#F591B7" number={occupied} label="Occupied" />
+          <Card2 tint="#4BDE80" number={available} label="Available" />
         </View>
       </ScrollView>
     </ScreenWrapper>
@@ -255,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    // marginTop: 5,
   },
   profileImage: {
     width: 120,
@@ -339,5 +352,4 @@ const styles = StyleSheet.create({
     height: 48, // Ensure enough height
     justifyContent: 'center',
   },
-  
 });
