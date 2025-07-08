@@ -29,7 +29,7 @@ export default Button;
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#4BDE80',
+        backgroundColor: '#303A96',
         borderRadius: radius._17,
         borderCurve: "continuous",
         height: verticalScale(50),

@@ -12,6 +12,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import axios from 'axios';
 import { storeToken } from '../utils/storage';
+import TopNav2 from "../components/TopNav2";
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -61,10 +62,19 @@ const Login = ({ navigation }: LoginProps) => {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
+      <TopNav2
+          title={
+            <Image
+              source={require('../assets/typo.png')}
+              resizeMode="contain"
+              style={styles.logoNav}
+            />
+          }
+        />
         {/* <BackButton iconSize={28} navigation={navigation} /> */}
-        <Image source={require('../assets/Icon.png')} style={styles.logo} />
+        {/* <Image source={require('../assets/Icon.png')} style={styles.logo} /> */}
 
-        <View style={{ gap: 5 }}>
+        <View style={{ gap: 5, marginTop: "20%" }}>
           <Typo size={30} fontWeight={"800"}>
             Hey,
           </Typo>
@@ -93,7 +103,7 @@ const Login = ({ navigation }: LoginProps) => {
         />
         <Typo size={14} color={colors.text} style={{alignSelf: "flex-end"}}>Forgot Password?</Typo>
         <Button onPress={handleSubmit} loading={isLoading}>
-                <Typo size={21} fontWeight={'700'} color={colors.black}>
+                <Typo size={21} fontWeight={'700'} color={colors.white}>
                     Login
                 </Typo>
             </Button>
@@ -116,6 +126,10 @@ const Login = ({ navigation }: LoginProps) => {
 export default Login;
 
 const styles = StyleSheet.create({
+  logoNav:{
+    width: 200,
+    height: 200,
+  },
     logo:{
         width: 100,
         height: 100,

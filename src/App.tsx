@@ -10,6 +10,7 @@ import NewAdmission from './screens/NewAdmission';
 import StudentRecord from './screens/StudentRecord';
 import SeatSelectin from './screens/SeatSelectin';
 import FinalConfirm from './screens/FinalConfirm';
+import Profile from './screens/Profile';
 import { getToken } from './utils/storage';
 
 export type RootStackParamList = {
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   NewAdmission: undefined;
   SeatSelection: { admissionData: any };
   FinalConfirm: { admissionData: any };
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,6 +50,7 @@ const App = () => {
         <Stack.Screen name="NewAdmission" component={NewAdmission} />
         <Stack.Screen name="SeatSelection" component={SeatSelectin} />
         <Stack.Screen name="FinalConfirm" component={FinalConfirm} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

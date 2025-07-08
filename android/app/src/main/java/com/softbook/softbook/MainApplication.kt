@@ -1,4 +1,4 @@
-package com.prataptechsolution
+package com.softbook.softbook
 
 import android.app.Application
 import com.facebook.react.PackageList

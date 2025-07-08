@@ -4,10 +4,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Welcome from '../screens/Welcome';
 import Profile from '../screens/Profile'; // assume you have this screen
 import { View, Text,Image, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // optional
 import NewAdmission from '../screens/NewAdmission';
 import StudentRecord from '../screens/StudentRecord';
 import Attendance from '../screens/Attendance';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Wrapper components to handle missing navigation props
 const WelcomeWrapper = (props: any) => <Welcome {...props} />;
@@ -23,45 +24,49 @@ const BottomTabs = () => {
         tabBarInactiveTintColor: '#999',
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1C1E2D',
+          backgroundColor: '#0F0E1B',
           borderTopWidth: 0,
           paddingVertical: 10,
+          height: 80,
         },
       }}
     >
       <Tab.Screen
-        name="Welcome"
+        name="Home"
         component={WelcomeWrapper}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={require('../assets/Compass.png')}
-              style={{ width: size, height: size, tintColor: color}}
-            />
+          tabBarIcon: ({ color }) => (
+            // <Image
+            //   source={require('../assets/Compass.png')}
+            //   style={[styles.icon, { tintColor: color }]}
+            // />
+            <Ionicons name="home" size={24} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="NewAdmission"
+        name="Admission"
         component={NewAdmissionWrapper}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={require('../assets/User_Add.png')}
-              style={{ width: size, height: size, tintColor: color}}
-            />
+          tabBarIcon: ({ color }) => (
+            // <Image
+            //   source={require('../assets/User_Add.png')}
+            //   style={[styles.icon, { tintColor: color }]}
+            // />
+            <Ionicons name="person-add-outline" size={28} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="Student Record"
+        name="Students"
         component={StudentRecord}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={require('../assets/File_Search.png')}
-              style={{ width: size, height: size, tintColor: color}}
-            />
+          tabBarIcon: ({ color }) => (
+            // <Image
+            //   source={require('../assets/File_Search.png')}
+            //   style={[styles.icon, { tintColor: color }]}
+            // />
+            <Ionicons name="cube-outline" size={28} color={color} />
           ),
         }}
       />
@@ -69,11 +74,25 @@ const BottomTabs = () => {
         name="Attendance"
         component={Attendance}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={require('../assets/User_Check.png')}
-              style={{ width: size, height: size, tintColor: color}}
-            />
+          tabBarIcon: ({ color }) => (
+            // <Image
+            //   source={require('../assets/User_Check.png')}
+            //   style={[styles.icon, { tintColor: color }]}
+            // />
+            <Ionicons name="people-outline" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarIcon: ({ color }) => (
+            // <Image
+            //   source={require('../assets/User_Circle.png')}
+            //   style={[styles.icon, { tintColor: color }]}
+            // />
+            <Ionicons name="person-outline" size={28} color={color} />
           ),
         }}
       />
@@ -87,7 +106,6 @@ const styles = StyleSheet.create({
   icon: {
     width: 28,
     height: 28,
-    marginBottom: 10,
-    // tintColor: '#03C7BD',
+    resizeMode: 'contain',
   },
 });
