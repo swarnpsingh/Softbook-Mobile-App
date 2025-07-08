@@ -2,29 +2,29 @@ import { colors } from '../constants/theme'
 import { ScreenWrapperProps } from '../types'
 import React from 'react'
 import { Dimensions, Platform, StatusBar, StyleSheet, View } from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
 
+const { height } = Dimensions.get('window')
 
-const { height } = Dimensions.get('window') // Get the height of the device screen
-
-const ScreenWrapper = ({style, children}: ScreenWrapperProps) => { //
-  // Define a functional component that takes style and children as props
-  // style is an optional prop for custom styles, children are the components to be wrapped
-  // This component is used to provide a consistent layout and styling for screens in the app
-    let paddingTop = Platform.OS === 'ios' ? height * 0.06 : 50; // Set padding top based on platform and screen height
-  return (
-    <View style={[{
-        paddingTop,
-        // paddingHorizontal: 8,
-        flex: 1,
-        backgroundColor: '#0F0E1B',
-    }, style] // Merge the styles passed in props with the default styles
-    }>
-      <StatusBar
-        barStyle="light-content"
-        />
-        {children} 
-    </View> // Render the children components inside the View
-  )
+const ScreenWrapper = ({style, children}: ScreenWrapperProps) => {
+    let paddingTop = Platform.OS === 'ios' ? height * 0.06 : 50;
+    
+    return (
+        <LinearGradient
+            colors={['#484381', '#1E1D3D', '#0F0E1B']}
+            start={{ x: 1, y: 0 }} // Top right
+            end={{ x: 0, y: 1 }}   // Bottom left
+            // locations={[0.1, 0.4]}
+            locations={[0.05, 0.2, 0.5]} 
+            style={[{
+                paddingTop,
+                flex: 1,
+            }, style]}
+        >
+            <StatusBar barStyle="light-content" />
+            {children}
+        </LinearGradient>
+    )
 }
 
 export default ScreenWrapper

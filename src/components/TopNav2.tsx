@@ -1,14 +1,11 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import React, { ReactNode } from 'react'
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { verticalScale } from '../utils/styling';
-import { colors } from '../constants/theme';
-import Typo from './Typo';
+import { verticalScale } from '../utils/styling'
+import Typo from './Typo'
 
-// Add type for props
 type TopNav2Props = {
-  title: string;
+  title: ReactNode;
 };
 
 const TopNav2 = ({ title }: TopNav2Props) => {
@@ -17,12 +14,7 @@ const TopNav2 = ({ title }: TopNav2Props) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        {/* <Ionicons 
-          name="chevron-back"
-          size={verticalScale(26)}
-          color={colors.white}
-        /> */}
-        <Image source={require('../assets/Icon.png')}  style={styles.logo} />
+        <Image source={require('../assets/Icon.png')} style={styles.logo} />
       </TouchableOpacity>
       <View style={styles.titleContainer}>
         <Typo style={styles.title}>{title}</Typo>
@@ -39,9 +31,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#0F0E1B',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    backgroundColor: 'transparent', // Fully transparent
     position: 'relative',
   },
   backButton: {

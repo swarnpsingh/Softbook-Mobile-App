@@ -106,7 +106,9 @@ const Welcome = ({ navigation }: WelcomeProps) => {
   return (
     <ScreenWrapper>
       <ScrollView>
-        <TopNav2 title="SoftBook" />  
+        <TopNav2 title={
+          <Image source={require('../assets/typo.png')} resizeMode='contain' style={styles.logo} />
+        } />  
         <View style={styles.container}>
           {/* <Typo style={styles.statText}>Total Rooms: {roomCount}</Typo>
           <Typo style={styles.statText}>Total Shifts: {shiftCount}</Typo> */}
@@ -239,6 +241,10 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     alignItems: 'center',
+  },
+  logo: {
+    width: 200,
+    height: 200,
   },
   center: {
     flex: 1,
