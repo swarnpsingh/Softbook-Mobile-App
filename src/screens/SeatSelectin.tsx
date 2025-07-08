@@ -131,13 +131,13 @@ const SeatSelection = ({ route, navigation }: Props) => {
       formData.append('image', imageFile as any);
       console.log('Added image file:', imageFile);
     }
-  
+  console.log(formData)
     try {
       const token = await getToken();
       console.log('Token obtained:', token ? 'Yes' : 'No');
       
       const response = await axios.post(
-        'http://192.168.0.101:3000/api/v1/students/admission',
+        'http://192.168.0.100:3000/api/v1/students/admission',
         formData,
         {
           headers: {
