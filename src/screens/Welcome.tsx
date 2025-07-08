@@ -23,8 +23,8 @@ const Welcome = ({ navigation }: WelcomeProps) => {
   const [shiftCount, setShiftCount] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [seats, setSeats] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState('A');
-  const [selectedShift, setSelectedShift] = useState('morning');
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [selectedShift, setSelectedShift] = useState('');
 
   const [availableRooms, setAvailableRooms] = useState<string[]>([]); // <-- new
   const [availableShifts, setAvailableShifts] = useState<string[]>([]); // <-- new
@@ -57,6 +57,8 @@ const Welcome = ({ navigation }: WelcomeProps) => {
         });
         setAvailableRooms(Array.from(roomSet));
         setAvailableShifts(Array.from(shiftSet));
+        setSelectedRoom(Array.from(roomSet)[0]);
+        setSelectedShift(Array.from(shiftSet)[0]);
         setRoomCount(roomSet.size);
         setShiftCount(shiftSet.size);
         setSeats(seats);
@@ -104,7 +106,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
   return (
     <ScreenWrapper>
       <ScrollView>
-        <TopNav2 title="Welcome" />  
+        <TopNav2 title="SoftBook" />  
         <View style={styles.container}>
           {/* <Typo style={styles.statText}>Total Rooms: {roomCount}</Typo>
           <Typo style={styles.statText}>Total Shifts: {shiftCount}</Typo> */}
