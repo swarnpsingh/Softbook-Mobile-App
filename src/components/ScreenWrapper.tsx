@@ -16,7 +16,7 @@ const ScreenWrapper = ({style, children}: ScreenWrapperProps) => { //
         paddingTop,
         // paddingHorizontal: 8,
         flex: 1,
-        backgroundColor: '#101826',
+        backgroundColor: '#0F0E1B',
     }, style] // Merge the styles passed in props with the default styles
     }>
       <StatusBar

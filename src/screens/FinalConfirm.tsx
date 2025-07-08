@@ -4,6 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import ScreenWrapper from '../components/ScreenWrapper';
 import TopNav from '../components/TopNav';
+import TopNav2 from '../components/TopNav2';
 import Typo from '../components/Typo';
 import Button from '../components/Button';
 import { colors } from '../constants/theme';
@@ -27,7 +28,7 @@ const FinalConfirm = ({ route }: FinalConfirmProps) => {
     const token = await getToken();
     try {
       const response = await axios.get(
-        'http://192.168.0.101:3000/api/v1/students/allstudents',
+        'http://192.168.0.100:3000/api/v1/students/allstudents',
         {
           headers: {
             'Content-Type': 'application/json',
@@ -140,7 +141,7 @@ const FinalConfirm = ({ route }: FinalConfirmProps) => {
 
   return (
     <ScreenWrapper>
-      <TopNav />
+      <TopNav2 title="Final Confirmation" />
       <ScrollView>
         <View style={styles.container}>
           <Typo size={24} fontWeight="bold" style={styles.title}>

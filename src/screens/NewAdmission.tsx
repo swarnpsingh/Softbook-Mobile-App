@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-nati
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
 import TopNav from '../components/TopNav';
+import TopNav2 from '../components/TopNav2';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { colors } from '../constants/theme';
@@ -41,7 +42,7 @@ const NewAdmission = ({ navigation }: NewAdmissionProps) => {
   return (
     <ScreenWrapper>
       <ScrollView>
-        <TopNav />
+        <TopNav2 title="New Admission" />
         <View style={styles.container}>
           <Typo size={24} fontWeight="bold" style={styles.title}>
             New Admission

@@ -11,7 +11,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import ScreenWrapper from '../components/ScreenWrapper';
-import TopNav from '../components/TopNav';
+import TopNav2 from '../components/TopNav2';
 import Typo from '../components/Typo';
 import axios from 'axios';
 import { getToken } from '../utils/storage';
@@ -37,7 +37,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
       const token = await getToken();
       try {
         const response = await axios.get(
-          'http://192.168.0.101:3000/api/v1/seat/allseats',
+          'http://192.168.0.100:3000/api/v1/seat/allseats',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -175,7 +175,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
 
   return (
     <ScreenWrapper>
-      <TopNav />
+      <TopNav2 title="Seat Selection" />
       <ScrollView>
         <View style={styles.container}>
           <Typo size={24} fontWeight="bold" style={{ marginBottom: 20 }}>

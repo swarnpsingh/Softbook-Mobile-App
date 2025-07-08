@@ -29,7 +29,7 @@ const Login = ({ navigation }: LoginProps) => {
         setIsLoading(true);
         try {
             const response = await axios.post(
-                "http://192.168.0.101:3000/api/v1/admin/login",
+                "http://192.168.0.100:3000/api/v1/admin/login",
                 {
                   email,
                   password,

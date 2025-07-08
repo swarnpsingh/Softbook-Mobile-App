@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
-import TopNav from '../components/TopNav';
+import TopNav2 from '../components/TopNav2';
 import { getToken } from '../utils/storage';
 import axios from 'axios';
 import moment from 'moment';
@@ -14,7 +14,7 @@ const StudentRecord = () => {
     const token = await getToken();
     try {
       const responseStudents = await axios.get(
-        'http://192.168.0.101:3000/api/v1/students/allstudents',
+        'http://192.168.0.100:3000/api/v1/students/allstudents',
         {
           headers: {
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const StudentRecord = () => {
 
   return (
     <ScreenWrapper>
-      <TopNav />
+      <TopNav2 title="Student Record" />
       <View style={styles.headerContainer}>
         <Typo size={24} fontWeight="bold">Student Record</Typo>
       </View>

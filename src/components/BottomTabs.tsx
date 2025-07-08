@@ -25,7 +25,7 @@ const BottomTabs = () => {
         tabBarStyle: {
           backgroundColor: '#1C1E2D',
           borderTopWidth: 0,
-          paddingVertical: 5,
+          paddingVertical: 10,
         },
       }}
     >

@@ -11,6 +11,7 @@ import Card from '../components/Card';
 import Card2 from '../components/Card2';
 import { getToken } from '../utils/storage';
 import { Picker } from '@react-native-picker/picker';
+import TopNav2 from '../components/TopNav2';
 
 type WelcomeProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
@@ -36,7 +37,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
       const token = await getToken();
       try {
         const response = await axios.get(
-          'http://192.168.0.101:3000/api/v1/seat/allseats',
+          'http://192.168.0.100:3000/api/v1/seat/allseats',
           {
             headers: {
               'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
 
         // ✅ Fetch students
     const responseStudents = await axios.get(
-        'http://192.168.0.101:3000/api/v1/students/allstudents',
+        'http://192.168.0.100:3000/api/v1/students/allstudents',
         {
           headers: {
             'Content-Type': 'application/json',
@@ -102,129 +103,129 @@ const Welcome = ({ navigation }: WelcomeProps) => {
 
   return (
     <ScreenWrapper>
-        <ScrollView>
-      <TopNav />
-      <View style={styles.container}>
-        {/* <Typo style={styles.statText}>Total Rooms: {roomCount}</Typo>
-        <Typo style={styles.statText}>Total Shifts: {shiftCount}</Typo> */}
+      <ScrollView>
+        <TopNav2 title="Welcome" />  
+        <View style={styles.container}>
+          {/* <Typo style={styles.statText}>Total Rooms: {roomCount}</Typo>
+          <Typo style={styles.statText}>Total Shifts: {shiftCount}</Typo> */}
 
-        {/*Profile Section*/}
-        <View style={styles.profileContainer}>
-          <Image
-            source={require('../assets/swarnPhoto.jpg')}
-            style={styles.profileImage}
+          {/*Profile Section*/}
+          <View style={styles.profileContainer}>
+            <Image
+              source={require('../assets/swarnPhoto.jpg')}
+              style={styles.profileImage}
+            />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Typo style={styles.profileText} size={24}>
+                Hello
+              </Typo>
+              <Typo style={styles.profileText} size={24} fontWeight={'bold'}>
+                Library Name
+              </Typo>
+            </View>
+            <Typo style={{ color: '#989FAB' }}>Welcome to your home.</Typo>
+          </View>
+        </View>
+
+        {/*Card Section*/}
+        <View style={styles.cardContainer}>
+          <Card
+            icon={require('../assets/home-icon.png')}
+            tint="#03C7BD"
+            number={roomCount || 0}
+            label="Total Rooms"
           />
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Typo style={styles.profileText} size={24}>
-              Hello
-            </Typo>
-            <Typo style={styles.profileText} size={24} fontWeight={'bold'}>
-              Library Name
-            </Typo>
-          </View>
-          <Typo style={{ color: '#989FAB' }}>Welcome to your home.</Typo>
+          <Card
+            icon={require('../assets/Clock.png')}
+            tint="#F591B7"
+            number={shiftCount || 0}
+            label="Total Shifts"
+          />
+          <Card
+            icon={require('../assets/Data.png')}
+            tint="#D6D446"
+            number={totalStudents || 0}
+            label="Total Students"
+          />
         </View>
-      </View>
 
-      {/*Card Section*/}
-      <View style={styles.cardContainer}>
-        <Card
-          icon={require('../assets/home-icon.png')}
-          tint="#03C7BD"
-          number={roomCount || 0}
-          label="Total Rooms"
-        />
-        <Card
-          icon={require('../assets/Clock.png')}
-          tint="#F591B7"
-          number={shiftCount || 0}
-          label="Total Shifts"
-        />
-        <Card
-          icon={require('../assets/Data.png')}
-          tint="#D6D446"
-          number={totalStudents || 0}
-          label="Total Students"
-        />
-      </View>
+        {/* Dropdown Filters */}
+        <View style={styles.pickerContainer}>
+          <View style={styles.dropdownContainer}>
+            <Typo style={styles.pickerLabel}>Room</Typo>
+            <View style={styles.dropdownWrapper}>
+              <Picker
+                selectedValue={selectedRoom}
+                onValueChange={itemValue => setSelectedRoom(itemValue)}
+                style={styles.dropdown}
+                dropdownIconColor="white"
+              >
+                {availableRooms.map(room => (
+                  <Picker.Item 
+                    label={room} 
+                    value={room} 
+                    key={room}
+                    color="white"
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+          <View style={styles.dropdownContainer}>
+            <Typo style={styles.pickerLabel}>Shift</Typo>
+            <View style={styles.dropdownWrapper}>
+              <Picker
+                selectedValue={selectedShift}
+                onValueChange={itemValue => setSelectedShift(itemValue)}
+                style={styles.dropdown}
+                dropdownIconColor="white"
+              >
+                {availableShifts.map(shift => (
+                  <Picker.Item 
+                    label={shift} 
+                    value={shift} 
+                    key={shift}
+                    color="white"
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+        </View>
 
-      {/* Dropdown Filters */}
-      <View style={styles.pickerContainer}>
-        <View style={styles.dropdownContainer}>
-          <Typo style={styles.pickerLabel}>Room</Typo>
-          <View style={styles.dropdownWrapper}>
-            <Picker
-              selectedValue={selectedRoom}
-              onValueChange={itemValue => setSelectedRoom(itemValue)}
-              style={styles.dropdown}
-              dropdownIconColor="white"
+        {/* Grid */}
+        <View style={styles.gridContainer}>
+          {filteredSeats.map((seat: any) => (
+            <View
+              key={seat._id}
+              style={[
+                styles.seatBox,
+                seat.status === 'booked' ? styles.booked : styles.availableSeat,
+              ]}
             >
-              {availableRooms.map(room => (
-                <Picker.Item 
-                  label={room} 
-                  value={room} 
-                  key={room}
-                  color="white"
-                />
-              ))}
-            </Picker>
-          </View>
+              <Text style={styles.seatText}>{seat.seatNo}</Text>
+            </View>
+          ))}
         </View>
-        <View style={styles.dropdownContainer}>
-          <Typo style={styles.pickerLabel}>Shift</Typo>
-          <View style={styles.dropdownWrapper}>
-            <Picker
-              selectedValue={selectedShift}
-              onValueChange={itemValue => setSelectedShift(itemValue)}
-              style={styles.dropdown}
-              dropdownIconColor="white"
-            >
-              {availableShifts.map(shift => (
-                <Picker.Item 
-                  label={shift} 
-                  value={shift} 
-                  key={shift}
-                  color="white"
-                />
-              ))}
-            </Picker>
-          </View>
+
+        {/* Summary */}
+        <View style={styles.summaryContainer}>
+          <Card2
+            tint="#03C7BD"
+            number={totalSeats}
+            label="Total Seats"
+          />
+          <Card2
+            tint="#F591B7"
+            number={occupied}
+            label="Occupied"
+          />
+          <Card2
+            tint="#4BDE80"
+            number={available}
+            label="Available"
+          />
         </View>
-      </View>
-
-      {/* Grid */}
-      <View style={styles.gridContainer}>
-        {filteredSeats.map((seat: any) => (
-          <View
-            key={seat._id}
-            style={[
-              styles.seatBox,
-              seat.status === 'booked' ? styles.booked : styles.availableSeat,
-            ]}
-          >
-            <Text style={styles.seatText}>{seat.seatNo}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Summary */}
-      <View style={styles.summaryContainer}>
-        <Card2
-          tint="#03C7BD"
-          number={totalSeats}
-          label="Total Seats"
-        />
-        <Card2
-          tint="#F591B7"
-          number={occupied}
-          label="Occupied"
-        />
-        <Card2
-          tint="#4BDE80"
-          number={available}
-          label="Available"
-        />
-      </View>
       </ScrollView>
     </ScreenWrapper>
   );
@@ -267,8 +268,9 @@ const styles = StyleSheet.create({
   summaryContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 20,
+    // marginTop: 20,
     paddingHorizontal: 10,
+    marginBottom: 20,
   },
   gridContainer: {
     flexDirection: 'row',
