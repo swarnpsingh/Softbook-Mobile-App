@@ -11,6 +11,7 @@ import StudentRecord from './screens/StudentRecord';
 import SeatSelectin from './screens/SeatSelectin';
 import FinalConfirm from './screens/FinalConfirm';
 import Profile from './screens/Profile';
+import { AppProvider } from './contexts/AppContext';
 import { getToken } from './utils/storage';
 
 export type RootStackParamList = {
@@ -39,20 +40,29 @@ const App = () => {
     checkAuth();
   }, []);
 
-  if (isLoading) return <Splash navigation={{ navigate: () => {} } as any} route={{} as any} />; // Show splash until auth check is done
+  if (isLoading)
+    return (
+      <Splash navigation={{ navigate: () => {} } as any} route={{} as any} />
+    ); // Show splash until auth check is done
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Tabs" component={BottomTabs} />
-        <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="NewAdmission" component={NewAdmission} />
-        <Stack.Screen name="SeatSelection" component={SeatSelectin} />
-        <Stack.Screen name="FinalConfirm" component={FinalConfirm} />
-        <Stack.Screen name="Profile" component={Profile} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName={initialRoute}
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Tabs" component={BottomTabs} />
+          <Stack.Screen name="Welcome" component={Welcome} />
+          <Stack.Screen name="NewAdmission" component={NewAdmission} />
+          <Stack.Screen name="SeatSelection" component={SeatSelectin} />
+          <Stack.Screen name="FinalConfirm" component={FinalConfirm} />
+          <Stack.Screen name="Profile" component={Profile} />
+          {/* <Stack.Screen name="Login" component={Login} /> */}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppProvider>
   );
 };
 

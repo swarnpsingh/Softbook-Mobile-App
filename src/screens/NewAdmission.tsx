@@ -191,7 +191,7 @@ const NewAdmission = ({ navigation }: NewAdmissionProps) => {
                 navigation.navigate('SeatSelection', { admissionData: data })
               }
             >
-              <Typo size={21} fontWeight={'700'} color={colors.black}>
+              <Typo size={21} fontWeight={'600'} color={colors.white}>
                 Proceed to Seat Selection
               </Typo>
             </Button>

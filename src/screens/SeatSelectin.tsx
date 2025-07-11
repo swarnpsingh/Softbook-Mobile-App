@@ -19,55 +19,42 @@ import { Picker } from '@react-native-picker/picker';
 import Button from '../components/Button';
 import { colors } from '../constants/theme';
 import mime from 'mime';
+import { useAppContext } from '../contexts/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SeatSelection'>;
 
 const SeatSelection = ({ route, navigation }: Props) => {
   const { admissionData } = route.params;
 
-  const [seats, setSeats] = useState([]);
-  const [availableRooms, setAvailableRooms] = useState<string[]>([]);
-  const [availableShifts, setAvailableShifts] = useState<string[]>([]);
+  // Use context
+  const {
+    seats,
+    availableRooms,
+    availableShifts,
+    fetchAllSeats,
+    loading,
+  } = useAppContext();
+
   const [selectedRoom, setSelectedRoom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
 
+  // Fetch seats on mount if not already loaded
   useEffect(() => {
-    const fetchData = async () => {
-      const token = await getToken();
-      try {
-        const response = await axios.get(
-          'http://192.168.0.100:3000/api/v1/seat/allseats',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        const fetchedSeats = response.data.seats;
-
-        const roomSet = new Set<string>();
-        const shiftSet = new Set<string>();
-        fetchedSeats.forEach((seat: any) => {
-          roomSet.add(seat.room);
-          shiftSet.add(seat.shift);
-        });
-
-        setSeats(fetchedSeats);
-        setAvailableRooms(Array.from(roomSet));
-        setAvailableShifts(Array.from(shiftSet));
-
-        // Default select
-        setSelectedRoom(Array.from(roomSet)[0] || '');
-        setSelectedShift(Array.from(shiftSet)[0] || '');
-      } catch (err) {
-        console.error('Error fetching seats:', err);
-      }
-    };
-
-    fetchData();
+    if (seats.length === 0) {
+      fetchAllSeats();
+    }
   }, []);
+
+  // Set default room/shift when data loads
+  useEffect(() => {
+    if (availableRooms.length > 0 && !selectedRoom) {
+      setSelectedRoom(availableRooms[0]);
+    }
+    if (availableShifts.length > 0 && !selectedShift) {
+      setSelectedShift(availableShifts[0]);
+    }
+  }, [availableRooms, availableShifts]);
 
   const filteredSeats = seats.filter(
     (seat: any) =>
@@ -137,7 +124,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
       console.log('Token obtained:', token ? 'Yes' : 'No');
       
       const response = await axios.post(
-        'http://192.168.0.100:3000/api/v1/students/admission',
+        'https://softbook-backend.onrender.com/api/v1/students/admission',
         formData,
         {
           headers: {
@@ -250,7 +237,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
           </View>
 
           <Button onPress={handleSubmit} style={{ marginTop: 20 }}>
-            <Typo size={18} fontWeight="bold" color={colors.black}>
+            <Typo size={18} fontWeight="600" color={colors.white}>
               Confirm Seat Selection
             </Typo>
           </Button>

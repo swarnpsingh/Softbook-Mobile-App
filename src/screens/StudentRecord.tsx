@@ -3,47 +3,16 @@ import { View, StyleSheet, ScrollView, Text, TextInput } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
 import TopNav2 from '../components/TopNav2';
-import { getToken } from '../utils/storage';
-import axios from 'axios';
+import { useAppContext } from '../contexts/AppContext';
 import moment from 'moment';
 
-type Student = {
-  _id: string;
-  studentName: string;
-  room: string;
-  shift: string;
-  seatNo: string;
-  phone: string;
-  dueDate: string;
-};
-
 const StudentRecord = () => {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
+  const { students, fetchStudents, loading } = useAppContext();
+  const [filteredStudents, setFilteredStudents] = useState<typeof students>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const fetchData = async () => {
-    const token = await getToken();
-    try {
-      const responseStudents = await axios.get(
-        'http://192.168.0.100:3000/api/v1/students/allstudents',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setStudents(responseStudents.data.students);
-      setFilteredStudents(responseStudents.data.students);
-    } catch (err) {
-      console.error('Error fetching students:', err);
-    }
-  };
 
   useEffect(() => {
-    fetchData();
+    if (students.length === 0) fetchStudents();
   }, []);
 
   useEffect(() => {
@@ -91,45 +60,47 @@ const StudentRecord = () => {
       {loading ? (
         <Typo style={styles.loadingText}>Loading...</Typo>
       ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.tableContainer}>
-            {/* Table Header */}
-            <View style={[styles.row, styles.headerRow]}>
-              <Text style={styles.cell}>Sl. No.</Text>
-              <Text style={styles.cell}>Name</Text>
-              <Text style={styles.cell}>Room</Text>
-              <Text style={styles.cell}>Shift</Text>
-              <Text style={styles.cell}>Seat</Text>
-              <Text style={styles.cell}>Phone</Text>
-              <Text style={styles.cell}>Due Date</Text>
-            </View>
-
-            {/* Table Rows */}
-            {filteredStudents.length > 0 ? (
-              filteredStudents.map((student: any, index: number) => {
-                const dueDate = moment(student.dueDate).add(1, 'month');
-                const { style: rowStyle, tag } = getRowStyle(student.dueDate);
-
-                return (
-                  <View style={[styles.row, rowStyle]} key={student._id}>
-                    <Text style={styles.cell}>{index + 1}</Text>
-                    <Text style={styles.cell}>{student.studentName}</Text>
-                    <Text style={styles.cell}>{student.room}</Text>
-                    <Text style={styles.cell}>{student.shift}</Text>
-                    <Text style={styles.cell}>{student.seatNo}</Text>
-                    <Text style={styles.cell}>{student.phone}</Text>
-                    <Text style={styles.cell}>{moment(student.dueDate).format('DD/MM/YYYY')}</Text>
-                  </View>
-                );
-              })
-            ) : (
-              <View style={styles.noRecordsContainer}>
-                <Typo style={styles.noRecordsText}>
-                  No students found matching your search
-                </Typo>
+        <ScrollView showsVerticalScrollIndicator={true}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.tableContainer}>
+              {/* Table Header */}
+              <View style={[styles.row, styles.headerRow]}>
+                <Text style={styles.cell}>Sl. No.</Text>
+                <Text style={styles.cell}>Name</Text>
+                <Text style={styles.cell}>Room</Text>
+                <Text style={styles.cell}>Shift</Text>
+                <Text style={styles.cell}>Seat</Text>
+                <Text style={styles.cell}>Phone</Text>
+                <Text style={styles.cell}>Due Date</Text>
               </View>
-            )}
-          </View>
+
+              {/* Table Rows */}
+              {filteredStudents.length > 0 ? (
+                filteredStudents.map((student, index) => {
+                  const dueDate = moment(student.dueDate).add(1, 'month');
+                  const { style: rowStyle } = getRowStyle(student.dueDate);
+
+                  return (
+                    <View style={[styles.row, rowStyle]} key={student._id}>
+                      <Text style={styles.cell}>{index + 1}</Text>
+                      <Text style={styles.cell}>{student.studentName}</Text>
+                      <Text style={styles.cell}>{student.room}</Text>
+                      <Text style={styles.cell}>{student.shift}</Text>
+                      <Text style={styles.cell}>{student.seatNo}</Text>
+                      <Text style={styles.cell}>{student.phone}</Text>
+                      <Text style={styles.cell}>{moment(student.dueDate).format('DD/MM/YYYY')}</Text>
+                    </View>
+                  );
+                })
+              ) : (
+                <View style={styles.noRecordsContainer}>
+                  <Typo style={styles.noRecordsText}>
+                    No students found matching your search
+                  </Typo>
+                </View>
+              )}
+            </View>
+          </ScrollView>
         </ScrollView>
       )}
     </ScreenWrapper>

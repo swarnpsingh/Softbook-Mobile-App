@@ -19,89 +19,39 @@ import Card2 from '../components/Card2';
 import { getToken } from '../utils/storage';
 import { Picker } from '@react-native-picker/picker';
 import TopNav2 from '../components/TopNav2';
+import { useAppContext } from '../contexts/AppContext';
 
 type WelcomeProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
 // TOKEN= eBearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjUwY2NiOWYwOGE1MDdiNDRmYjA4MCIsImlhdCI6MTc1MTcyMTg5MX0.H00ZOn9_luakIfMMuMToNLUFUGaPBrWrOWNEG8wchYc
 const Welcome = ({ navigation }: WelcomeProps) => {
-  // Handle case where navigation might not be provided (when used in bottom tabs)
-  const [libraryName, setLibraryName] = useState<string>('Library Name'); // Initial placeholder
-  const handleNavigation = navigation || { replace: () => {} };
-  const [roomCount, setRoomCount] = useState<number | null>(null);
-  const [shiftCount, setShiftCount] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [seats, setSeats] = useState([]);
+  const {
+    adminProfile,
+    seats,
+    availableRooms,
+    availableShifts,
+    totalStudents,
+    loading,
+    fetchWelcomeData,
+  } = useAppContext();
+
   const [selectedRoom, setSelectedRoom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
 
-  const [availableRooms, setAvailableRooms] = useState<string[]>([]); // <-- new
-  const [availableShifts, setAvailableShifts] = useState<string[]>([]); // <-- new
-
-  const [totalStudents, setTotalStudents] = useState<number>(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = await getToken();
-      try {
-        // Fetch admin profile first
-        const profileResponse = await axios.get(
-          'http://192.168.0.100:3000/api/v1/admin/profile',
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setLibraryName(profileResponse.data.admin.libraryName);
-
-        const response = await axios.get(
-          'http://192.168.0.100:3000/api/v1/seat/allseats',
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const seats = response.data.seats;
-
-        const roomSet = new Set<string>();
-        const shiftSet = new Set<string>();
-
-        seats.forEach((seat: any) => {
-          roomSet.add(seat.room);
-          shiftSet.add(seat.shift);
-        });
-        setAvailableRooms(Array.from(roomSet));
-        setAvailableShifts(Array.from(shiftSet));
-        setSelectedRoom(Array.from(roomSet)[0]);
-        setSelectedShift(Array.from(shiftSet)[0]);
-        setRoomCount(roomSet.size);
-        setShiftCount(shiftSet.size);
-        setSeats(seats);
-
-        // ✅ Fetch students
-        const responseStudents = await axios.get(
-          'http://192.168.0.100:3000/api/v1/students/allstudents',
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        const students = responseStudents.data.students;
-        setTotalStudents(students.length); // ✅ Save total students count
-      } catch (error) {
-        console.error('Error fetching seats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchWelcomeData();
   }, []);
+
+  // Set initial room and shift when available
+  useEffect(() => {
+    if (availableRooms.length > 0 && selectedRoom === '') {
+      setSelectedRoom(availableRooms[0]);
+    }
+    if (availableShifts.length > 0 && selectedShift === '') {
+      setSelectedShift(availableShifts[0]);
+    }
+  }, [availableRooms, availableShifts]);
 
   if (loading) {
     return (
@@ -149,7 +99,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
                 Hello
               </Typo>
               <Typo style={styles.profileText} size={24} fontWeight={'bold'}>
-                {libraryName}
+                {adminProfile?.libraryName}
               </Typo>
             </View>
             <Typo style={{ color: '#989FAB' }}>Welcome to your home.</Typo>
@@ -161,13 +111,13 @@ const Welcome = ({ navigation }: WelcomeProps) => {
           <Card
             icon={require('../assets/home-icon.png')}
             tint="#03C7BD"
-            number={roomCount || 0}
+            number={availableRooms.length || 0}
             label="Total Rooms"
           />
           <Card
             icon={require('../assets/Clock.png')}
             tint="#F591B7"
-            number={shiftCount || 0}
+            number={availableShifts.length || 0}
             label="Total Shifts"
           />
           <Card

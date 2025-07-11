@@ -1,67 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import ScreenWrapper from '../components/ScreenWrapper';
-import TopNav from '../components/TopNav';
 import TopNav2 from '../components/TopNav2';
 import Typo from '../components/Typo';
 import Button from '../components/Button';
 import { colors } from '../constants/theme';
-import { pickPDF } from '../utils/documentPicker';
-import { generatePDF } from '../utils/generatePDF';
+import { useAppContext } from '../contexts/AppContext';
 import reactNativeHTMLToPdf from 'react-native-html-to-pdf';
-import { PermissionsAndroid, Platform } from 'react-native';
 import Share from 'react-native-share';
-import { getToken } from '../utils/storage';
-import axios from 'axios';
 import moment from 'moment';
 
 
 type FinalConfirmProps = NativeStackScreenProps<RootStackParamList, 'FinalConfirm'>;
 
 const FinalConfirm = ({ route }: FinalConfirmProps) => {
-  // const { admissionData } = route.params;
-  const [libraryName, setLibraryName] = useState<string>('Library Name'); 
-  const [latestStudent, setLatestStudent] = useState<any>(null);
+  const { students, adminProfile, fetchAdminProfile, fetchStudents } = useAppContext();
 
-  const fetchData = async () => {
-    const token = await getToken();
-    try {
-      // Fetch admin profile first
-      const profileResponse = await axios.get(
-        'http://192.168.0.100:3000/api/v1/admin/profile',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setLibraryName(profileResponse.data.admin.libraryName);
-
-      const response = await axios.get(
-        'http://192.168.0.100:3000/api/v1/students/allstudents',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-  
-      const allStudents = response.data.students;
-      const mostRecent = allStudents[allStudents.length - 1]; // change logic if needed
-      setLatestStudent(mostRecent);
-    } catch (err) {
-      console.error('Error fetching students:', err);
-    }
-  };
-  
-
+  // Fetch data on mount if not already loaded
   useEffect(() => {
-    fetchData();
+    if (!adminProfile) fetchAdminProfile();
+    if (students.length === 0) fetchStudents();
   }, []);
+
+  const latestStudent = students.length > 0 ? students[students.length - 1] : null;
 
   const handleGeneratePDF = async () => {
   
@@ -84,10 +47,8 @@ const FinalConfirm = ({ route }: FinalConfirmProps) => {
       </head>
       <body>
         <div class="header">
-          <h1>${libraryName}</h1>
-          <h3>A SELF STUDY CENTER</h3>
-          <p>H. No.-34-A, Singh Villa, Road No.-19, (Near Noble Public School),</p>
-          <p>Bank Colony, Baba Chowk, Keshri Nagar, Patna-800024</p>
+          <h1>${adminProfile?.libraryName}</h1>
+          <p>${adminProfile?.libraryAddress}</p>
           <p>📞 9304161888, 9835491795</p>
         </div>
 
@@ -102,7 +63,7 @@ const FinalConfirm = ({ route }: FinalConfirmProps) => {
           <tr><td><strong>ID Proof</strong></td><td>${latestStudent?.idProof}</td></tr>
           <tr><td><strong>Local Address</strong></td><td>${latestStudent?.localAdd}</td></tr>
           <tr><td><strong>Permanent Address</strong></td><td>${latestStudent?.permanentAdd}</td></tr>
-          <tr><td><strong>Due Date</strong></td><td>${moment(latestStudent?.dueDate).format('DD/MM/YYYY')}</td></tr>
+          <tr><td><strong>Due Date</strong></td><td>${latestStudent?.dueDate ? new Date(latestStudent.dueDate).toLocaleDateString('en-GB') : ''}</td></tr>
           <tr><td><strong>Amount</strong></td><td>₹${latestStudent?.amount}</td></tr>
         </table>
   
@@ -168,41 +129,41 @@ const FinalConfirm = ({ route }: FinalConfirmProps) => {
             
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Student Name:</Typo>
-              <Typo size={16} style={styles.value}>{latestStudent?.studentName}</Typo>
+              <Typo size={16} style={styles.value}>{latestStudent ? latestStudent.studentName : ''}</Typo>
             </View>
             
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Father's Name:</Typo>
-              <Typo size={16} style={styles.value}>{latestStudent?.fatherName}</Typo>
+              <Typo size={16} style={styles.value}>{latestStudent ? latestStudent.fatherName : ''}</Typo>
             </View>
             
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Room:</Typo>
-              <Typo size={16} style={styles.value}>{latestStudent?.room}</Typo>
+              <Typo size={16} style={styles.value}>{latestStudent ? latestStudent.room : ''}</Typo>
             </View>
             
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Seat No:</Typo>
-              <Typo size={16} style={styles.value}>{latestStudent?.seatNo}</Typo>
+              <Typo size={16} style={styles.value}>{latestStudent ? latestStudent.seatNo : ''}</Typo>
             </View>
             
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Duration:</Typo>
-              <Typo size={16} style={styles.value}>{latestStudent?.duration} months</Typo>
+              <Typo size={16} style={styles.value}>{latestStudent ? latestStudent.duration : ''} months</Typo>
             </View>
             
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Amount:</Typo>
-              <Typo size={16} style={styles.value}>₹{latestStudent?.amount}</Typo>
+              <Typo size={16} style={styles.value}>₹{latestStudent ? latestStudent.amount : ''}</Typo>
             </View>
             <View style={styles.detailRow}>
               <Typo size={16} style={styles.label}>Due Date:</Typo>
-              <Typo size={16} style={styles.value}>{moment(latestStudent?.dueDate).format('DD/MM/YYYY')}</Typo>
+              <Typo size={16} style={styles.value}>{latestStudent ? moment(latestStudent.dueDate).format('DD/MM/YYYY') : ''}</Typo>
             </View>
           </View>
           
           <Button style={styles.confirmButton}>
-            <Typo size={18} fontWeight="bold" color={colors.black}>
+            <Typo size={18} fontWeight="600" color={colors.white}>
               Confirm Admission
             </Typo>
           </Button>

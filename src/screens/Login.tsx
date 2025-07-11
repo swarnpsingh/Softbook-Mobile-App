@@ -30,7 +30,7 @@ const Login = ({ navigation }: LoginProps) => {
         setIsLoading(true);
         try {
             const response = await axios.post(
-                "http://192.168.0.100:3000/api/v1/admin/login",
+                "https://softbook-backend.onrender.com/api/v1/admin/login",
                 {
                   email,
                   password,
@@ -103,7 +103,7 @@ const Login = ({ navigation }: LoginProps) => {
         />
         <Typo size={14} color={colors.text} style={{alignSelf: "flex-end"}}>Forgot Password?</Typo>
         <Button onPress={handleSubmit} loading={isLoading}>
-                <Typo size={21} fontWeight={'700'} color={colors.white}>
+                <Typo size={21} fontWeight={'600'} color={colors.white}>
                     Login
                 </Typo>
             </Button>

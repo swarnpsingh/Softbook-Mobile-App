@@ -3,8 +3,7 @@ import { View, StyleSheet, ScrollView, Text, TextInput } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
 import TopNav2 from '../components/TopNav2';
-import { getToken } from '../utils/storage';
-import axios from 'axios';
+import { useAppContext } from '../contexts/AppContext';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -21,35 +20,11 @@ interface AttendanceRecord {
 }
 
 const Attendance = () => {
-  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
-  const [filteredAttendance, setFilteredAttendance] = useState<AttendanceRecord[]>([]);
+  const { attendance, fetchAttendance, loading } = useAppContext();
+  const [filteredAttendance, setFilteredAttendance] = useState<typeof attendance>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const fetchAttendance = async (date: Date) => {
-    setLoading(true);
-    const token = await getToken();
-    try {
-      const formattedDate = moment(date).format('YYYY-MM-DD');
-      const response = await axios.get(
-        `http://192.168.0.100:3000/api/v1/attendance/admin?date=${formattedDate}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setAttendance(response.data.attendance);
-      setFilteredAttendance(response.data.attendance);
-    } catch (err) {
-      console.error('Error fetching attendance:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchAttendance(selectedDate);
@@ -114,40 +89,42 @@ const Attendance = () => {
       {loading ? (
         <Typo style={styles.loadingText}>Loading...</Typo>
       ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.tableContainer}>
-            {/* Table Header */}
-            <View style={[styles.row, styles.headerRow]}>
-              <Text style={styles.cell}>Sl. No.</Text>
-              <Text style={styles.cell}>Name</Text>
-              <Text style={styles.cell}>Room</Text>
-              <Text style={styles.cell}>Shift</Text>
-              <Text style={styles.cell}>Seat</Text>
-              <Text style={styles.cell}>Phone</Text>
-            </View>
-
-            {/* Table Rows */}
-            {filteredAttendance.length > 0 ? (
-              filteredAttendance.map((record, index) => (
-                <View style={styles.row} key={record._id}>
-                  <Text style={styles.cell}>{index + 1}</Text>
-                  <Text style={styles.cell}>
-                    {record.student?.studentName || 'Unknown'}
-                  </Text>
-                  <Text style={styles.cell}>{record.student?.room || '-'}</Text>
-                  <Text style={styles.cell}>{record.student?.shift || '-'}</Text>
-                  <Text style={styles.cell}>{record.student?.seatNo || '-'}</Text>
-                  <Text style={styles.cell}>{record.student?.phone || '-'}</Text>
-                </View>
-              ))
-            ) : (
-              <View style={styles.noRecordsContainer}>
-                <Typo style={styles.noRecordsText}>
-                  No attendance records found
-                </Typo>
+        <ScrollView showsVerticalScrollIndicator={true}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.tableContainer}>
+              {/* Table Header */}
+              <View style={[styles.row, styles.headerRow]}>
+                <Text style={styles.cell}>Sl. No.</Text>
+                <Text style={styles.cell}>Name</Text>
+                <Text style={styles.cell}>Room</Text>
+                <Text style={styles.cell}>Shift</Text>
+                <Text style={styles.cell}>Seat</Text>
+                <Text style={styles.cell}>Phone</Text>
               </View>
-            )}
-          </View>
+
+              {/* Table Rows */}
+              {filteredAttendance.length > 0 ? (
+                filteredAttendance.map((record, index) => (
+                  <View style={styles.row} key={record._id}>
+                    <Text style={styles.cell}>{index + 1}</Text>
+                    <Text style={styles.cell}>
+                      {record.student?.studentName || 'Unknown'}
+                    </Text>
+                    <Text style={styles.cell}>{record.student?.room || '-'}</Text>
+                    <Text style={styles.cell}>{record.student?.shift || '-'}</Text>
+                    <Text style={styles.cell}>{record.student?.seatNo || '-'}</Text>
+                    <Text style={styles.cell}>{record.student?.phone || '-'}</Text>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.noRecordsContainer}>
+                  <Typo style={styles.noRecordsText}>
+                    No attendance records found
+                  </Typo>
+                </View>
+              )}
+            </View>
+          </ScrollView>
         </ScrollView>
       )}
     </ScreenWrapper>
