@@ -1,4 +1,45 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Softbook
+
+Softbook is a React Native application designed for library or study center management. It enables administrators to manage student admissions, seat assignments, attendance, and student records, and provides features like PDF receipt generation and document uploads.
+
+---
+
+## Features
+
+- **Authentication:** Secure admin login to access the app.
+- **Dashboard (Welcome):** Overview of total rooms, shifts, and students.
+- **Student Admission:** Add new students, collect details, upload ID proof, and assign seats.
+- **Seat Selection:** Visual seat selection based on room and shift.
+- **Student Records:** Searchable, filterable list of all students with due dates and details.
+- **Attendance:** Mark and view attendance records for students, filterable by date and name.
+- **Profile:** View admin/library profile, subscription info, and contact support.
+- **PDF Generation:** Generate and share admission receipts as PDFs.
+- **Document Picker:** Upload documents and images (with a temporary workaround for React Native 0.80.1).
+
+## Main Screens
+
+- **Splash:** Initial loading screen.
+- **Login:** Admin authentication.
+- **Welcome:** Dashboard with stats and quick info.
+- **New Admission:** Form for adding new students.
+- **Seat Selection:** Assign seats to students.
+- **Final Confirmation:** Confirm admission and generate PDF receipt.
+- **Student Record:** List and search all students.
+- **Attendance:** Mark and view attendance.
+- **Profile:** Admin/library details and logout.
+
+## Tech Stack
+
+- React Native 0.80.1
+- TypeScript
+- React Navigation
+- Axios (API calls)
+- react-native-html-to-pdf (PDF generation)
+- react-native-share (sharing PDFs)
+- @react-native-documents/picker (document/image upload)
+- moment (date handling)
+
+---
 
 # Getting Started
 
@@ -73,14 +114,7 @@ When you want to forcefully reload, for example to reset the state of your app, 
 - **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
 - **iOS**: Press <kbd>R</kbd> in iOS Simulator.
 
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+---
 
 # Troubleshooting
 
