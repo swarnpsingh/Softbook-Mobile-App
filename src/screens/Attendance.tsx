@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TextInput } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TextInput, RefreshControl } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
 import TopNav2 from '../components/TopNav2';
 import { useAppContext } from '../contexts/AppContext';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useRefreshControl } from '../utils/common';
 
 interface AttendanceRecord {
   _id: string;
@@ -25,6 +26,7 @@ const Attendance = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { refreshing, onRefresh } = useRefreshControl(() => fetchAttendance(selectedDate));
 
   useEffect(() => {
     fetchAttendance(selectedDate);
@@ -89,7 +91,12 @@ const Attendance = () => {
       {loading ? (
         <Typo style={styles.loadingText}>Loading...</Typo>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={true}>
+        <ScrollView 
+          showsVerticalScrollIndicator={true}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.tableContainer}>
               {/* Table Header */}

@@ -24,6 +24,8 @@ interface Student {
   permanentAdd: string;
   amount: number;
   duration: number;
+  image?: string;
+  idUpload?: string;
 }
 
 interface AttendanceRecord {
@@ -67,6 +69,7 @@ interface AppContextType {
   availableRooms: string[];
   availableShifts: string[];
   totalStudents: number;
+  totalIncome: number;
 
   fetchStudents: () => Promise<void>;
   fetchAttendance: (date: Date) => Promise<void>;
@@ -90,6 +93,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [availableRooms, setAvailableRooms] = useState<string[]>([]);
   const [availableShifts, setAvailableShifts] = useState<string[]>([]);
   const [totalStudents, setTotalStudents] = useState<number>(0);
+  const [totalIncome, setTotalIncome] = useState<number>(0);
 
   const logout = async () => {
     await removeToken();
@@ -123,6 +127,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logout();
     }
   }, [adminProfile]);
+
+  // Update totalStudents whenever students array changes
+  useEffect(() => {
+    setTotalStudents(students.length);
+  }, [students]);
+
+  // Update totalIncome whenever students array changes
+  useEffect(() => {
+    const total = students.reduce((sum, student) => sum + (student.amount || 0), 0);
+    setTotalIncome(total);
+  }, [students]);
 
   const fetchAllSeats = async () => {
     setLoading(true);
@@ -240,6 +255,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         availableRooms,
         availableShifts,
         totalStudents,
+        totalIncome,
         fetchAdminProfile,
         fetchAllSeats,
         fetchWelcomeData,

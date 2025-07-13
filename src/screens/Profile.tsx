@@ -1,5 +1,5 @@
-import { StyleSheet, View, ScrollView } from 'react-native';
-import React, { useEffect } from 'react';
+import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
 import TopNav2 from '../components/TopNav2';
 import Typo from '../components/Typo';
@@ -9,11 +9,13 @@ import { colors } from '../constants/theme';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { removeToken } from '../utils/storage';
+import { useRefreshControl } from '../utils/common';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
 const Profile = ({ route, navigation }: Props) => {
   const { adminProfile, fetchAdminProfile } = useAppContext();
+  const { refreshing, onRefresh } = useRefreshControl(fetchAdminProfile);
 
   const logout = async () => {
     await removeToken();
@@ -26,7 +28,11 @@ const Profile = ({ route, navigation }: Props) => {
 
   return (
     <ScreenWrapper>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <TopNav2 title="Profile" />
         <View style={styles.container}>
           <View style={{ gap: 5, marginTop: '20%' }}>

@@ -1,3 +1,23 @@
+import { useState } from 'react';
+
+// Custom hook for pull-to-refresh functionality
+export const useRefreshControl = (refreshFunction: () => Promise<void>) => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshFunction();
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  return { refreshing, onRefresh };
+};
+
 export const getLast7Days = () => {
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const result = [];

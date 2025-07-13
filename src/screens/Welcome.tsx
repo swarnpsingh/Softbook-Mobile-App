@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -20,6 +21,7 @@ import { getToken } from '../utils/storage';
 import { Picker } from '@react-native-picker/picker';
 import TopNav2 from '../components/TopNav2';
 import { useAppContext } from '../contexts/AppContext';
+import { useRefreshControl } from '../utils/common';
 
 type WelcomeProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
@@ -31,12 +33,14 @@ const Welcome = ({ navigation }: WelcomeProps) => {
     availableRooms,
     availableShifts,
     totalStudents,
+    totalIncome,
     loading,
     fetchWelcomeData,
   } = useAppContext();
 
   const [selectedRoom, setSelectedRoom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
+  const { refreshing, onRefresh } = useRefreshControl(fetchWelcomeData);
 
 
   useEffect(() => {
@@ -74,14 +78,25 @@ const Welcome = ({ navigation }: WelcomeProps) => {
 
   return (
     <ScreenWrapper>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <TopNav2
           title={
-            <Image
-              source={require('../assets/typo.png')}
-              resizeMode="contain"
-              style={styles.logo}
-            />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Image
+                source={require('../assets/typo.png')}
+                resizeMode="contain"
+                style={styles.logo}
+                onError={() => console.log('Image failed to load')}
+              />
+              {/* Fallback text if image fails to load
+              <Typo style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>
+                SoftBook
+              </Typo> */}
+            </View>
           }
         />
         <View style={styles.container}>
@@ -125,6 +140,12 @@ const Welcome = ({ navigation }: WelcomeProps) => {
             tint="#D6D446"
             number={totalStudents || 0}
             label="Total Students"
+          />
+          <Card
+            icon={require('../assets/income.png')}
+            tint="#4BDE80"
+            number={`₹${totalIncome || 0}`}
+            label="Total Income"
           />
         </View>
 
@@ -192,6 +213,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
           <Card2 tint="#03C7BD" number={totalSeats} label="Total Seats" />
           <Card2 tint="#F591B7" number={occupied} label="Occupied" />
           <Card2 tint="#4BDE80" number={available} label="Available" />
+          {/* <Card2 tint="#4BDE80" number={`₹${totalIncome || 0}`} label="Total Income" /> */}
         </View>
       </ScrollView>
     </ScreenWrapper>
@@ -206,8 +228,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
   },
   center: {
     flex: 1,

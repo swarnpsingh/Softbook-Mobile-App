@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TextInput } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TextInput, RefreshControl } from 'react-native';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Typo from '../components/Typo';
 import TopNav2 from '../components/TopNav2';
 import { useAppContext } from '../contexts/AppContext';
 import moment from 'moment';
+import { useRefreshControl } from '../utils/common';
 
 const StudentRecord = () => {
   const { students, fetchStudents, loading } = useAppContext();
   const [filteredStudents, setFilteredStudents] = useState<typeof students>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const { refreshing, onRefresh } = useRefreshControl(fetchStudents);
 
   useEffect(() => {
     if (students.length === 0) fetchStudents();
@@ -60,7 +62,12 @@ const StudentRecord = () => {
       {loading ? (
         <Typo style={styles.loadingText}>Loading...</Typo>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={true}>
+        <ScrollView 
+          showsVerticalScrollIndicator={true}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.tableContainer}>
               {/* Table Header */}
