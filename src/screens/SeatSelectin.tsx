@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
@@ -20,20 +20,16 @@ import Button from '../components/Button';
 import { colors } from '../constants/theme';
 import mime from 'mime';
 import { useAppContext } from '../contexts/AppContext';
+import { useColorScheme } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SeatSelection'>;
 
 const SeatSelection = ({ route, navigation }: Props) => {
   const { admissionData } = route.params;
-
+  const isDarkTheme = useColorScheme() === 'dark';
   // Use context
-  const {
-    seats,
-    availableRooms,
-    availableShifts,
-    fetchAllSeats,
-    loading,
-  } = useAppContext();
+  const { seats, availableRooms, availableShifts, fetchAllSeats, loading } =
+    useAppContext();
 
   const [selectedRoom, setSelectedRoom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
@@ -57,11 +53,12 @@ const SeatSelection = ({ route, navigation }: Props) => {
   }, [availableRooms, availableShifts]);
 
   const filteredSeats = seats.filter(
-    (seat: any) =>
-      seat.room === selectedRoom && seat.shift === selectedShift,
+    (seat: any) => seat.room === selectedRoom && seat.shift === selectedShift,
   );
 
-  const availableSeats = filteredSeats.filter((s: any) => s.status !== 'booked');
+  const availableSeats = filteredSeats.filter(
+    (s: any) => s.status !== 'booked',
+  );
 
   const handleSubmit = async () => {
     if (!selectedSeat) {
@@ -70,33 +67,47 @@ const SeatSelection = ({ route, navigation }: Props) => {
     }
 
     // Validate required fields
-    const requiredFields = ['studentName', 'fatherName', 'phone', 'amount', 'duration'];
+    const requiredFields = [
+      'studentName',
+      'fatherName',
+      'phone',
+      'amount',
+      'duration',
+    ];
     const missingFields = requiredFields.filter(field => !admissionData[field]);
-    
+
     if (missingFields.length > 0) {
-      Alert.alert('Error', `Missing required fields: ${missingFields.join(', ')}`);
+      Alert.alert(
+        'Error',
+        `Missing required fields: ${missingFields.join(', ')}`,
+      );
       return;
     }
-  
+
     const updatedData = {
       ...admissionData,
       room: selectedRoom,
       shift: selectedShift,
       seatNo: selectedSeat,
     };
-  
+
     console.log('Submitting data:', updatedData);
-  
+
     const formData = new FormData();
-  
+
     Object.entries(updatedData).forEach(([key, value]) => {
       // Only append if value is not null/undefined
-      if (value !== null && value !== undefined && key !== 'idUpload' && key !== 'image') {
+      if (
+        value !== null &&
+        value !== undefined &&
+        key !== 'idUpload' &&
+        key !== 'image'
+      ) {
         formData.append(key, value);
         console.log(`Added to FormData: ${key} = ${value}`);
       }
     });
-  
+
     // Append idUpload (file) if it exists
     if (updatedData.idUpload) {
       const idUploadFile = {
@@ -107,7 +118,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
       formData.append('idUpload', idUploadFile as any);
       console.log('Added ID upload file:', idUploadFile);
     }
-  
+
     // Optional: Append image if it exists
     if (updatedData.image) {
       const imageFile = {
@@ -118,11 +129,11 @@ const SeatSelection = ({ route, navigation }: Props) => {
       formData.append('image', imageFile as any);
       console.log('Added image file:', imageFile);
     }
-  console.log(formData)
+    console.log(formData);
     try {
       const token = await getToken();
       console.log('Token obtained:', token ? 'Yes' : 'No');
-      
+
       const response = await axios.post(
         'https://softbook-backend.onrender.com/api/v1/students/admission',
         formData,
@@ -133,7 +144,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
           },
         },
       );
-  
+
       console.log('API Response:', response.data);
       Alert.alert('Success', 'Admission successful');
       navigation.navigate('FinalConfirm', { admissionData: updatedData });
@@ -143,7 +154,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
       console.error('Error message:', error.message);
       console.error('Error status:', error.response?.status);
       console.error('Error data:', error.response?.data);
-      
+
       let errorMessage = 'Please check your input or try again.';
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
@@ -154,11 +165,10 @@ const SeatSelection = ({ route, navigation }: Props) => {
       } else if (error.response?.status >= 500) {
         errorMessage = 'Server error. Please try again later.';
       }
-      
+
       Alert.alert('Submission Failed', errorMessage);
     }
   };
-  
 
   return (
     <ScreenWrapper>
@@ -184,7 +194,12 @@ const SeatSelection = ({ route, navigation }: Props) => {
                   dropdownIconColor="white"
                 >
                   {availableRooms.map(room => (
-                    <Picker.Item label={room} value={room} key={room} color="white" />
+                    <Picker.Item
+                      label={room}
+                      value={room}
+                      key={room}
+                      color={isDarkTheme ? 'white' : 'black'}
+                    />
                   ))}
                 </Picker>
               </View>
@@ -203,7 +218,12 @@ const SeatSelection = ({ route, navigation }: Props) => {
                   dropdownIconColor="white"
                 >
                   {availableShifts.map(shift => (
-                    <Picker.Item label={shift} value={shift} key={shift} color="white" />
+                    <Picker.Item
+                      label={shift}
+                      value={shift}
+                      key={shift}
+                      color={isDarkTheme ? 'white' : 'black'}
+                    />
                   ))}
                 </Picker>
               </View>

@@ -7,14 +7,14 @@ type CardProps = {
   number: number | string;
   label: string;
   tint?: string; // optional
+  style?: any; // allow custom style
 };
 
 const { width } = Dimensions.get('window');
-const cardWidth = width / 3 - 24; // 3 cards with margin
 
-const Card: React.FC<CardProps> = ({ icon, number, label, tint }) => {
+const Card: React.FC<CardProps> = ({ icon, number, label, tint, style }) => {
   return (
-    <View style={styles.shadowWrapper}>
+    <View style={[styles.shadowWrapper, style]}>
       <LinearGradient
         colors={['#4BDE80', '#03C7BD', '#F591B7', '#D6D446']}
         start={{ x: 0, y: 0 }}
@@ -38,7 +38,7 @@ export default Card;
 
 const styles = StyleSheet.create({
   shadowWrapper: {
-    width: cardWidth,
+    width: '42%',
     margin: 6,
     borderRadius: 16,
     backgroundColor: 'transparent',

@@ -18,26 +18,28 @@ type NewAdmissionProps = NativeStackScreenProps<
   'NewAdmission'
 >;
 
+const initialData = {
+  studentName: '',
+  fatherName: '',
+  localAdd: '',
+  permanentAdd: '',
+  room: '',
+  shift: '',
+  seatNo: '',
+  phone: '',
+  amount: '',
+  paymentMode: 'Online',
+  duration: '',
+  idProof: 'Aadhar Card',
+  idUpload: '',
+  image: '',
+  libraryId: '',
+  dueDate: '',
+};
+
 const NewAdmission = ({ navigation }: NewAdmissionProps) => {
   const [isLoading] = useState(false);
-  const [data, setData] = useState({
-    studentName: '',
-    fatherName: '',
-    localAdd: '',
-    permanentAdd: '',
-    room: '',
-    shift: '',
-    seatNo: '',
-    phone: '',
-    amount: '',
-    paymentMode: 'Online',
-    duration: '',
-    idProof: 'Aadhar Card',
-    idUpload: '',
-    image: '',
-    libraryId: '',
-    dueDate: '',
-  });
+  const [data, setData] = useState(initialData);
 
   return (
     <ScreenWrapper>
@@ -187,9 +189,10 @@ const NewAdmission = ({ navigation }: NewAdmissionProps) => {
             <Button
               style={styles.button}
               loading={isLoading}
-              onPress={() =>
-                navigation.navigate('SeatSelection', { admissionData: data })
-              }
+              onPress={() => {
+                navigation.navigate('SeatSelection', { admissionData: data });
+                setData(initialData);
+              }}
             >
               <Typo size={21} fontWeight={'600'} color={colors.white}>
                 Proceed to Seat Selection

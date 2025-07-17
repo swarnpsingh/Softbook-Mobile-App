@@ -22,11 +22,14 @@ import { Picker } from '@react-native-picker/picker';
 import TopNav2 from '../components/TopNav2';
 import { useAppContext } from '../contexts/AppContext';
 import { useRefreshControl } from '../utils/common';
+import { useColorScheme } from 'react-native';
+
 
 type WelcomeProps = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
 // TOKEN= eBearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjUwY2NiOWYwOGE1MDdiNDRmYjA4MCIsImlhdCI6MTc1MTcyMTg5MX0.H00ZOn9_luakIfMMuMToNLUFUGaPBrWrOWNEG8wchYc
 const Welcome = ({ navigation }: WelcomeProps) => {
+  const isDarkTheme = useColorScheme() === 'dark';
   const {
     adminProfile,
     seats,
@@ -124,24 +127,28 @@ const Welcome = ({ navigation }: WelcomeProps) => {
         {/*Card Section*/}
         <View style={styles.cardContainer}>
           <Card
+            style={{ width: '42%' }}
             icon={require('../assets/home-icon.png')}
             tint="#03C7BD"
             number={availableRooms.length || 0}
             label="Total Rooms"
           />
           <Card
+            style={{ width: '42%' }}
             icon={require('../assets/Clock.png')}
             tint="#F591B7"
             number={availableShifts.length || 0}
             label="Total Shifts"
           />
           <Card
+            style={{ width: '42%' }}
             icon={require('../assets/Data.png')}
             tint="#D6D446"
             number={totalStudents || 0}
             label="Total Students"
           />
           <Card
+            style={{ width: '42%' }}  
             icon={require('../assets/income.png')}
             tint="#4BDE80"
             number={`₹${totalIncome || 0}`}
@@ -165,7 +172,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
                     label={room}
                     value={room}
                     key={room}
-                    color="white"
+                    color={isDarkTheme ? 'white' : 'black'} // Dynamically set text color
                   />
                 ))}
               </Picker>
@@ -185,7 +192,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
                     label={shift}
                     value={shift}
                     key={shift}
-                    color="white"
+                    color={isDarkTheme ? 'white' : 'black'}
                   />
                 ))}
               </Picker>
