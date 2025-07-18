@@ -19,22 +19,22 @@ type NewAdmissionProps = NativeStackScreenProps<
 >;
 
 const initialData = {
-  studentName: '',
-  fatherName: '',
-  localAdd: '',
-  permanentAdd: '',
-  room: '',
-  shift: '',
-  seatNo: '',
-  phone: '',
-  amount: '',
-  paymentMode: 'Online',
-  duration: '',
-  idProof: 'Aadhar Card',
-  idUpload: '',
-  image: '',
-  libraryId: '',
-  dueDate: '',
+    studentName: '',
+    fatherName: '',
+    localAdd: '',
+    permanentAdd: '',
+    room: '',
+    shift: '',
+    seatNo: '',
+    phone: '',
+    amount: '',
+    paymentMode: 'Online',
+    duration: '',
+    idProof: 'Aadhar Card',
+    idUpload: '',
+    image: '',
+    libraryId: '',
+    dueDate: '',
 };
 
 const NewAdmission = ({ navigation }: NewAdmissionProps) => {

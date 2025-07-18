@@ -6,6 +6,7 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -39,16 +40,42 @@ const Welcome = ({ navigation }: WelcomeProps) => {
     totalIncome,
     loading,
     fetchWelcomeData,
+    logout,
   } = useAppContext();
 
   const [selectedRoom, setSelectedRoom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
   const { refreshing, onRefresh } = useRefreshControl(fetchWelcomeData);
+  const [hasHandledInactive, setHasHandledInactive] = useState(false);
 
 
   useEffect(() => {
     fetchWelcomeData();
   }, []);
+
+  useEffect(() => {
+    if (
+      adminProfile?.subscription?.active === false &&
+      !hasHandledInactive
+    ) {
+      setHasHandledInactive(true);
+      Alert.alert(
+        "Subscription Inactive",
+        "Your subscription is not active. Please renew to continue.",
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              await logout();
+              navigation.replace("Login");
+              setHasHandledInactive(false); // Reset for next session
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+  }, [adminProfile, logout, navigation, hasHandledInactive]);
 
   // Set initial room and shift when available
   useEffect(() => {
@@ -127,33 +154,33 @@ const Welcome = ({ navigation }: WelcomeProps) => {
         {/*Card Section*/}
         <View style={styles.cardContainer}>
           <Card
-            style={{ width: '42%' }}
+            style={{ width: '30%' }}
             icon={require('../assets/home-icon.png')}
             tint="#03C7BD"
             number={availableRooms.length || 0}
             label="Total Rooms"
           />
           <Card
-            style={{ width: '42%' }}
+            style={{ width: '30%' }}
             icon={require('../assets/Clock.png')}
             tint="#F591B7"
             number={availableShifts.length || 0}
             label="Total Shifts"
           />
           <Card
-            style={{ width: '42%' }}
+            style={{ width: '30%' }}
             icon={require('../assets/Data.png')}
             tint="#D6D446"
             number={totalStudents || 0}
             label="Total Students"
           />
-          <Card
+          {/* <Card
             style={{ width: '42%' }}  
             icon={require('../assets/income.png')}
             tint="#4BDE80"
             number={`₹${totalIncome || 0}`}
             label="Total Income"
-          />
+          /> */}
         </View>
 
         {/* Dropdown Filters */}

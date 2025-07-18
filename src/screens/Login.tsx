@@ -7,7 +7,7 @@ import { colors, spacingX, spacingY } from "../constants/theme";
 import { verticalScale } from "../utils/styling";
 // import { At, Lock } from 'phosphor-react-native';
 import React, { useRef, useState } from "react";
-import { Alert, Pressable, StyleSheet, View, Image } from "react-native";
+import { Alert, Pressable, StyleSheet, View, Image, Linking } from "react-native";
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import axios from 'axios';
@@ -22,58 +22,80 @@ const Login = ({ navigation }: LoginProps) => {
     const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async () => {
-        if (!email || !password) {
-          Alert.alert("Login", "Please fill all the fields");
+      if (!email || !password) {
+        Alert.alert("Login", "Please fill all the fields");
+        return;
+      }
+    
+      setIsLoading(true);
+      try {
+        const response = await axios.post(
+          "https://softbook-backend.onrender.com/api/v1/admin/login",
+          { email, password },
+          { headers: { "Content-Type": "application/json" } }
+        );
+    
+        const token = response.data?.token;
+    
+        if (!token) {
+          Alert.alert("Login", "Token not received");
           return;
         }
-      
-        setIsLoading(true);
+    
+        await storeToken(token);
+    
+        // Fetch admin profile
         try {
-            const response = await axios.post(
-                "https://softbook-backend.onrender.com/api/v1/admin/login",
-                {
-                  email,
-                  password,
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-      
-          const token = response.data?.token;
-      
-          if (token) {
-            await storeToken(token);
-            navigation.replace("Tabs"); // or your main screen
-          } else {
-            Alert.alert("Login", "Token not received");
+          const profileRes = await axios.get(
+            "https://softbook-backend.onrender.com/api/v1/admin/profile",
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          const adminProfile = profileRes.data?.admin;
+    
+          if (adminProfile?.subscription?.active === false) {
+            Alert.alert("Subscription Inactive", "Your subscription is not active. Please renew to continue.");
+            return;
           }
-        } catch (error: any) {
-          console.error("Login Error", error);
-          console.error("Error response:", error.response?.data);
-          console.error("Error status:", error.response?.status);
-          Alert.alert("Login Failed", error.response?.data?.msg || "Invalid credentials");
-        } finally {
-          setIsLoading(false);
+    
+          navigation.replace("Tabs");
+        } catch (profileError: any) {
+          console.error("Profile fetch error:", profileError.response?.data);
+          Alert.alert(
+            "Profile Error",
+            profileError.response?.data?.msg ||
+              "Could not verify subscription status. Please contact support."
+          );
         }
-      };
+      } catch (error: any) {
+        console.error("Login error:", error.response?.data);
+        Alert.alert(
+          "Login Failed",
+          error.response?.data?.message || "Invalid credentials"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
       <TopNav2
           title={
-            <Image
-              source={require('../assets/typo.png')}
-              resizeMode="contain"
-              style={styles.logoNav}
-            />
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+              <Image
+                source={require('../assets/typo.png')}
+                resizeMode="contain"
+                style={styles.logo}
+                onError={() => console.log('Image failed to load')}
+              />
+              {/* <Typo style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>
+                SoftBook
+              </Typo> */}
+            </View>
           }
         />
         {/* <BackButton iconSize={28} navigation={navigation} /> */}
         {/* <Image source={require('../assets/Icon.png')} style={styles.logo} /> */}
-
+        <View style={styles.container}>
         <View style={{ gap: 5, marginTop: "20%" }}>
           <Typo size={30} fontWeight={"800"}>
             Hey,
@@ -86,7 +108,7 @@ const Login = ({ navigation }: LoginProps) => {
         {/* Form Section */}
         <View style={styles.form}>
             <Typo size={16} color={colors.textLighter}>
-                Login now to track all your expenses
+                Login now to track your business
             </Typo>
 
         {/* Input */}
@@ -101,8 +123,8 @@ const Login = ({ navigation }: LoginProps) => {
             value={password}
             onChangeText={setPassword}
         />
-        <Typo size={14} color={colors.text} style={{alignSelf: "flex-end"}}>Forgot Password?</Typo>
-        <Button onPress={handleSubmit} loading={isLoading}>
+        {/* <Typo size={14} color={colors.text} style={{alignSelf: "flex-end"}}>Forgot Password?</Typo> */}
+        <Button onPress={handleSubmit} loading={isLoading} style = {{marginTop: 20}}>
                 <Typo size={21} fontWeight={'600'} color={colors.white}>
                     Login
                 </Typo>
@@ -114,8 +136,8 @@ const Login = ({ navigation }: LoginProps) => {
             <Typo size={15}>
                 Don't have an account?
             </Typo>
-                <Pressable>
-                    <Typo size={15} fontWeight={"700"} color={colors.primary}>Sign up</Typo>
+                <Pressable onPress={() => Linking.openURL('https://www.softbook.co.in')}>
+                    <Typo size={15} fontWeight={"700"} color={colors.primary}>Register</Typo>
                 </Pressable>
         </View>
       </View>
@@ -126,16 +148,11 @@ const Login = ({ navigation }: LoginProps) => {
 export default Login;
 
 const styles = StyleSheet.create({
-  logoNav:{
-    width: 200,
-    height: 200,
+  logo: {
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
   },
-    logo:{
-        width: 100,
-        height: 100,
-        alignSelf: 'flex-start',
-        marginTop: spacingY._20,
-    },
   container: {
     flex: 1,
     gap: spacingY._30,

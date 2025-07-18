@@ -57,6 +57,12 @@ interface AdminProfile {
   // Add other admin fields if needed
 }
 
+interface Payment {
+  amount: number | string;
+  paymentDate: string;
+  // add other fields if needed
+}
+
 interface AppContextType {
   students: Student[];
   attendance: AttendanceRecord[];
@@ -70,6 +76,7 @@ interface AppContextType {
   availableShifts: string[];
   totalStudents: number;
   totalIncome: number;
+  paymentData: Payment[];
 
   fetchStudents: () => Promise<void>;
   fetchAttendance: (date: Date) => Promise<void>;
@@ -94,6 +101,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [availableShifts, setAvailableShifts] = useState<string[]>([]);
   const [totalStudents, setTotalStudents] = useState<number>(0);
   const [totalIncome, setTotalIncome] = useState<number>(0);
+  const [paymentData, setPaymentData] = useState<Payment[]>([]);
 
   const logout = async () => {
     await removeToken();
@@ -138,6 +146,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const total = students.reduce((sum, student) => sum + (student.amount || 0), 0);
     setTotalIncome(total);
   }, [students]);
+
+  const loadPayments = async () => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        await logout();
+        return;
+      }
+      const response = await axios.get("https://softbook-backend.onrender.com/api/v1/payment/getpayments", {
+        headers: { Authorization: `Bearer ${token}`},
+      });
+      if (response.data.success) {
+        setPaymentData(response.data.payments || []);
+      }
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        await logout();
+        // Optionally, you can show an alert or redirect to login here
+      }
+      console.error("Error fetching payments:", error);
+    }
+  };
+  useEffect(()=>{
+    loadPayments();
+  },[])
 
   const fetchAllSeats = async () => {
     setLoading(true);
@@ -260,6 +293,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         fetchAllSeats,
         fetchWelcomeData,
         logout,
+        paymentData
       }}
     >
       {children}
