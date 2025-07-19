@@ -234,7 +234,7 @@ const Welcome = ({ navigation }: WelcomeProps) => {
               key={seat._id}
               style={[
                 styles.seatBox,
-                seat.status === 'booked' ? styles.booked : styles.availableSeat,
+                seat.status === 'booked' || seat.status === 'unavailable' ? styles.booked : styles.availableSeat,
               ]}
             >
               <Text style={styles.seatText}>{seat.seatNo}</Text>

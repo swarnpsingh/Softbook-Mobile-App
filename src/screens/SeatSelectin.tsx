@@ -34,6 +34,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
   const [selectedRoom, setSelectedRoom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch seats on mount if not already loaded
   useEffect(() => {
@@ -61,8 +62,10 @@ const SeatSelection = ({ route, navigation }: Props) => {
   );
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     if (!selectedSeat) {
       Alert.alert('Error', 'Please select a seat.');
+      setIsSubmitting(false);
       return;
     }
 
@@ -81,6 +84,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
         'Error',
         `Missing required fields: ${missingFields.join(', ')}`,
       );
+      setIsSubmitting(false);
       return;
     }
 
@@ -148,6 +152,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
       console.log('API Response:', response.data);
       Alert.alert('Success', 'Admission successful');
       navigation.navigate('FinalConfirm', { admissionData: updatedData });
+      setIsSubmitting(false);
     } catch (error: any) {
       console.error('Full error object:', error);
       console.error('Error response:', error.response);
@@ -167,6 +172,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
       }
 
       Alert.alert('Submission Failed', errorMessage);
+      setIsSubmitting(false);
     }
   };
 
@@ -233,7 +239,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
           {/* Seat Grid */}
           <View style={styles.gridContainer}>
             {filteredSeats.map((seat: any) => {
-              const isBooked = seat.status === 'booked';
+              const isBooked = seat.status === 'booked' || seat.status === 'unavailable';
               const isSelected = seat.seatNo === selectedSeat;
 
               return (
@@ -256,7 +262,7 @@ const SeatSelection = ({ route, navigation }: Props) => {
             })}
           </View>
 
-          <Button onPress={handleSubmit} style={{ marginTop: 20 }}>
+          <Button onPress={handleSubmit} style={{ marginTop: 20 }} loading={isSubmitting}>
             <Typo size={18} fontWeight="600" color={colors.white}>
               Confirm Seat Selection
             </Typo>

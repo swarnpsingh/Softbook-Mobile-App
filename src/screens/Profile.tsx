@@ -146,7 +146,7 @@ const Profile = ({ route, navigation }: Props) => {
               <Typo size={16} fontWeight={'600'}>Total Monthly Income</Typo>
             </View>
             <View>
-              <Typo size={16} fontWeight={'800'} color='#56d91e'>{"₹" + income}</Typo>
+              <Typo size={16} fontWeight={'800'} color='#56d91e'>₹ {income}</Typo>
             </View>
           </View>
           <View style={styles.profileContainer}>
@@ -154,7 +154,7 @@ const Profile = ({ route, navigation }: Props) => {
               <Typo size={16} fontWeight={'600'}>Total Income</Typo>
             </View>
             <View>
-              <Typo size={16} fontWeight={'800'} color='#56d91e'>{"₹" + totalIncome}</Typo>
+              <Typo size={16} fontWeight={'800'} color='#56d91e'>₹ {totalIncome}</Typo>
             </View>
           </View>
 
