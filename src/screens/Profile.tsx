@@ -173,7 +173,7 @@ const Profile = ({ route, navigation }: Props) => {
                 <Typo size={16} fontWeight={'400'}>Phone (emegency only)</Typo>
               </View>
               <View>
-                <Typo size={16} fontWeight={'400'}>(+91) 76672 61255</Typo>
+                <Typo size={16} fontWeight={'400'}>(+91) 7667261255</Typo>
               </View>
             </View>
           </View>
