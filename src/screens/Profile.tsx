@@ -165,7 +165,7 @@ const Profile = ({ route, navigation }: Props) => {
                 <Typo size={16} fontWeight={'400'}>Email us at</Typo>
               </View>
               <View>
-                <Typo size={16} fontWeight={'400'}>customersupport@softbook.co.in</Typo>
+                <Typo size={16} fontWeight={'400'}>softbook.co.in@gmail.com</Typo>
               </View>
             </View>
             <View style={styles.profileContainer}>
